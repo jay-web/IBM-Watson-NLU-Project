@@ -39,21 +39,20 @@ function getNLUInstance() {
   return naturalLanguageUnderstanding;
 }
 
-let analyze = (req, res, category, type) => {
+let analyze = (req, res, category) => {
   let urlToAnalyze = req.query.url;
   let textToAnalyze = req.query.text;
-  console.log("request ", req.query.text);
-  console.log("url", req.query.url);
+  
   const analyzeParams = {
     url: urlToAnalyze,
     text: textToAnalyze,
     features: {
       sentiment: {
-        targets: ["positive", "negative"],
+        document: true,
       },
       keywords: {
         emotion: true,
-        // limit: 1,
+        sentiment: true,
       },
     },
   };
@@ -69,36 +68,24 @@ let analyze = (req, res, category, type) => {
       //   );
       //   console.log("REsponse ", analysisResults.result.sentiment.targets[0].label);
       //Please refer to the image to see the order of retrieval
-      if (category == "emotion" && type == "text") {
-        console.log(analysisResults.result.keywords[0]);
-        if (analysisResults.result.keywords) {
-          return res.send(analysisResults.result.keywords[0].emotion, null, 2);
-        }
-      }
-      if (category == "sentiment" && type == "text") {
-        console.log(analysisResults.result.sentiment);
-        if (analysisResults.result.sentiment) {
-          return res.send(analysisResults.result.sentiment.targets[0].label);
-        }
-        return res.send("neutral");
-      }
-
-      if (category == "emotion" && type == "url") {
+      if (category == "emotion") {
         if (analysisResults.result.keywords) {
           return res.send(analysisResults.result.keywords[0].emotion, null, 2);
         }
       }
 
-      if (category == "sentiment" && type == "url") {
-        if (analysisResults.result.sentiment) {
-          return res.send(analysisResults.result.sentiment.targets[0].label);
+      if (category == "emotion") {
+        if (analysisResults.result.keywords) {
+          return res.send(analysisResults.result.keywords[0].emotion, null, 2);
         }
-        return res.send("neutral");
+      }
+
+      if (category == "sentiment") {
+        return res.send(analysisResults.result.sentiment.document.label);
       }
     })
     .catch((err) => {
-      
-      return res.status(304).send({err: err});
+      return res.status(304).send({ err: err });
     });
 };
 

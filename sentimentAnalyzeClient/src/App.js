@@ -16,7 +16,9 @@ class App extends React.Component {
     sentimentOutput: [],
     sentiment: true,
     color: "",
-    text: ""
+    text: "",
+    message: "Please wait ...",
+    showMessage: false
   };
 
   /*
@@ -40,15 +42,17 @@ class App extends React.Component {
       mode: mode,
       sentimentOutput: [],
       sentiment: true,
-      text: ""
+      text: "",
       
     });
   };
 
   sendForSentimentAnalysis = () => {
+    this.setState({showMessage: true});
     let text = document.getElementById("textinput").value;
     if (text == "") {
       alert("Please enter the sentence");
+      this.setState({showMessage: false});
       return;
     }
     this.setState({text:  <h2>{text}</h2>});
@@ -91,6 +95,7 @@ class App extends React.Component {
               {data.includes("not enough") ? "Please enter more text to analyse" : data}
             </div>
           );
+          this.setState({showMessage: false});
           this.setState({ sentimentOutput: output });
           document.getElementById("textinput").value = "";
         })
@@ -102,9 +107,11 @@ class App extends React.Component {
   };
 
   sendForEmotionAnalysis = () => {
+    this.setState({showMessage: true});
     let text = document.getElementById("textinput").value;
     if (text == "") {
       alert("Please enter the sentence");
+      this.setState({showMessage: false});
       return;
     }
     this.setState({text:  <h2>{text}</h2>});
@@ -129,6 +136,7 @@ class App extends React.Component {
             this.setState({text : <h1>Please enter more text to analyse</h1>});
             return;
           }
+          this.setState({showMessage: false});
           this.setState({ sentimentOutput: <EmotionTable emotions={data} /> });
           document.getElementById("textinput").value = "";
         });
@@ -146,15 +154,16 @@ class App extends React.Component {
     return (
       <div className="App">
         <button
-          className="btn btn-info"
+          className="btn btn-info mr-2 mt-2"
           onClick={() => {
             this.renderOutput("text");
           }}
         >
           Text
         </button>
+       
         <button
-          className="btn btn-dark"
+          className="btn btn-dark mt-2"
           onClick={() => {
             this.renderOutput("url");
           }}
@@ -165,7 +174,7 @@ class App extends React.Component {
         <br />
         {this.state.innercomp}
         <br />
-        <button className="btn-primary" onClick={this.sendForSentimentAnalysis}>
+        <button className="btn-primary mr-2" onClick={this.sendForSentimentAnalysis}>
           Analyze Sentiment
         </button>
         <button className="btn-primary" onClick={this.sendForEmotionAnalysis}>
@@ -174,6 +183,7 @@ class App extends React.Component {
         <br />
         {this.state.text}
         {this.state.sentimentOutput}
+        {this.state.showMessage ? this.state.message : null}
       </div>
     );
   }
