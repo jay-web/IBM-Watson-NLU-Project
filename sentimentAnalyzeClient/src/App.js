@@ -46,11 +46,12 @@ class App extends React.Component {
   };
 
   sendForSentimentAnalysis = () => {
-    if (document.getElementById("textinput").value == "") {
+    let text = document.getElementById("textinput").value;
+    if (text == "") {
       alert("Please enter the sentence");
       return;
     }
-    this.setState({text: document.getElementById("textinput").value });
+    this.setState({text:  <h2>{text}</h2>});
     this.setState({ sentiment: true });
     let url = ".";
     let mode = this.state.mode;
