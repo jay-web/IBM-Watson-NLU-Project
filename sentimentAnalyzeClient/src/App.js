@@ -2,6 +2,7 @@ import "./bootstrap.min.css";
 import "./App.css";
 import EmotionTable from "./EmotionTable.js";
 import React from "react";
+import Buttons from "./components/buttons";
 
 class App extends React.Component {
   /*
@@ -11,14 +12,14 @@ class App extends React.Component {
   is set to text
   */
   state = {
-    innercomp: <textarea rows="4" cols="50" id="textinput" />,
+    showTextBox: true,
     mode: "text",
     sentimentOutput: [],
     sentiment: true,
     color: "",
     text: "",
     message: "Please wait ...",
-    showMessage: false
+    showMessage: false,
   };
 
   /*
@@ -28,34 +29,42 @@ class App extends React.Component {
   */
 
   renderOutput = (input_mode) => {
-    let rows = 1;
-    let mode = "url";
+    console.log("inputt", input_mode);
     //If the input mode is text make it 4 lines
-    if (input_mode === "text") {
-      mode = "text";
-      rows = 4;
+    if (input_mode.category === "text") {
+      this.setState({
+        mode: "text",
+        showTextBox: true,
+        sentimentOutput: [],
+        sentiment: true,
+        text: "",
+      });
+    } else {
+      this.setState({
+        mode: "url",
+        showTextBox: false,
+        sentimentOutput: [],
+        sentiment: true,
+        text: "",
+      });
     }
     document.getElementById("textinput").value = "";
-    
-    this.setState({
-      innercomp: <textarea rows={rows} cols="50" id="textinput" />,
-      mode: mode,
-      sentimentOutput: [],
-      sentiment: true,
-      text: "",
-      
-    });
   };
 
   sendForSentimentAnalysis = () => {
-    this.setState({showMessage: true});
+    this.setState({ showMessage: true });
     let text = document.getElementById("textinput").value;
     if (text == "") {
       alert("Please enter the sentence");
-      this.setState({showMessage: false});
+      this.setState({ showMessage: false });
       return;
     }
-    this.setState({text:  <h2>{text}</h2>});
+    if(this.state.mode == "url" && !text.includes("http")){
+      alert("Please type url or change the input type !!");
+      this.setState({ showMessage: false });
+      return;
+    }
+    this.setState({ text: <h2>{text}</h2> });
     this.setState({ sentiment: true });
     let url = ".";
     let mode = this.state.mode;
@@ -92,12 +101,14 @@ class App extends React.Component {
                 backgroundColor: "wheat",
               }}
             >
-              {data.includes("not enough") ? "Please enter more text to analyse" : data}
+              {data.includes("not enough")
+                ? "Please enter more text to analyse"
+                : data}
             </div>
           );
-          this.setState({showMessage: false});
+          this.setState({ showMessage: false });
           this.setState({ sentimentOutput: output });
-          document.getElementById("textinput").value = "";
+          // document.getElementById("textinput").value = "";
         })
         .catch((err) => {
           alert("Please enter more words to analyse!!");
@@ -107,14 +118,19 @@ class App extends React.Component {
   };
 
   sendForEmotionAnalysis = () => {
-    this.setState({showMessage: true});
+    this.setState({ showMessage: true });
     let text = document.getElementById("textinput").value;
     if (text == "") {
       alert("Please enter the sentence");
-      this.setState({showMessage: false});
+      this.setState({ showMessage: false });
       return;
     }
-    this.setState({text:  <h2>{text}</h2>});
+    if(this.state.mode == "url" && !text.includes("http")){
+      alert("Please type url or change the input type !!");
+      this.setState({ showMessage: false });
+      return;
+    }
+    this.setState({ text: <h2>{text}</h2> });
     this.setState({ sentiment: false });
     let url = ".";
     let mode = this.state.mode;
@@ -126,64 +142,82 @@ class App extends React.Component {
       mode +
       "=" +
       document.getElementById("textinput").value;
-    try{
-      fetch(url)
-      .then((response) => {
-        
+    try {
+      fetch(url).then((response) => {
         response.json().then((data) => {
           console.log("response ", data);
-          if(data.err){
-            this.setState({text : <h1>Please enter more text to analyse</h1>});
+          if (data.err) {
+            this.setState({ text: <h1>Please enter more text to analyse</h1> });
             return;
           }
-          this.setState({showMessage: false});
+          this.setState({ showMessage: false });
           this.setState({ sentimentOutput: <EmotionTable emotions={data} /> });
-          document.getElementById("textinput").value = "";
+          // document.getElementById("textinput").value = "";
         });
-      })
-     
-    
-    }catch(err){
+      });
+    } catch (err) {
       console.log(err);
       alert("Please enter more words to analyse!!");
     }
-    
   };
 
   render() {
     return (
       <div className="App">
-        <button
-          className="btn btn-info mr-2 mt-2"
-          onClick={() => {
-            this.renderOutput("text");
-          }}
-        >
-          Text
-        </button>
-       
-        <button
-          className="btn btn-dark mt-2"
-          onClick={() => {
-            this.renderOutput("url");
-          }}
-        >
-          URL
-        </button>
-        <br />
-        <br />
-        {this.state.innercomp}
-        <br />
-        <button className="btn-primary mr-2" onClick={this.sendForSentimentAnalysis}>
-          Analyze Sentiment
-        </button>
-        <button className="btn-primary" onClick={this.sendForEmotionAnalysis}>
-          Analyze Emotion
-        </button>
-        <br />
-        {this.state.text}
-        {this.state.sentimentOutput}
-        {this.state.showMessage ? this.state.message : null}
+        <div className="container-fluid main">
+          {/* // input-section */}
+          <div className="row input-section">
+            <div className="col-2">
+              <div className="selection mb-2 mt-1">
+                <h5>Select Input type</h5>
+                <Buttons
+                  type="info"
+                  text="Text"
+                  category="text"
+                  renderOutput={this.renderOutput}
+                />
+                <Buttons
+                  type="dark"
+                  text="Url"
+                  category="url"
+                  renderOutput={this.renderOutput}
+                />
+              </div>
+            </div>
+            <div className="col-7 content-section">
+              {this.state.showTextBox ? (
+                <textarea rows="4" cols="70" id="textinput" placeholder="Please type text here to analyze"/>
+              ) : (
+                <textarea rows="1" cols="70" id="textinput" placeholder="Please type url here to analyze"/>
+              )}
+            </div>
+            <div className="col-3 navigation-section">
+              <div className="selection mb-2 mt-1">
+                <h5>Run Analyze type</h5>
+                <Buttons
+                  type="primary"
+                  text="Analyze Sentiment"
+                  category=""
+                  renderOutput={this.sendForSentimentAnalysis}
+                />
+
+                <Buttons
+                  type="primary"
+                  text=" Analyze Emotion"
+                  category=""
+                  renderOutput={this.sendForEmotionAnalysis}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* output section */}
+          <div className="row output-section">
+          
+            {this.state.sentimentOutput}
+            {this.state.showMessage ? this.state.message : null}
+          </div>
+        </div>
       </div>
     );
   }

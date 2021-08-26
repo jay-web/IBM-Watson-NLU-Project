@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+.main{
+  background-color: cornflowerblue;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-section {
+  display: flex;
+  background-color: darkcyan;
+  align-items: center;
+
+}
+.output-section {
+  background-color: wheat;
+}
+.selection{
+ background-color: cornsilk;
+ padding: 1rem;
+ 
+}
+
