@@ -3,6 +3,8 @@ import "./App.css";
 import EmotionTable from "./EmotionTable.js";
 import React from "react";
 import Buttons from "./components/buttons";
+import Report from "./components/report";
+import Doc from "./components/doc";
 
 class App extends React.Component {
   /*
@@ -14,12 +16,14 @@ class App extends React.Component {
   state = {
     showTextBox: true,
     mode: "text",
-    sentimentOutput: [],
+    sentimentOutput: <Doc />,
     sentiment: true,
     color: "",
     text: "",
     message: "Please wait ...",
     showMessage: false,
+    report: null,
+    showGraph: false
   };
 
   /*
@@ -29,37 +33,36 @@ class App extends React.Component {
   */
 
   renderOutput = (input_mode) => {
-    console.log("inputt", input_mode);
-    //If the input mode is text make it 4 lines
     if (input_mode.category === "text") {
       this.setState({
         mode: "text",
         showTextBox: true,
-        sentimentOutput: [],
-        sentiment: true,
-        text: "",
       });
     } else {
       this.setState({
         mode: "url",
         showTextBox: false,
-        sentimentOutput: [],
-        sentiment: true,
-        text: "",
       });
     }
+
+    this.setState({
+      sentimentOutput: [],
+      sentiment: true,
+      text: "",
+    });
     document.getElementById("textinput").value = "";
   };
 
   sendForSentimentAnalysis = () => {
     this.setState({ showMessage: true });
     let text = document.getElementById("textinput").value;
+    // let target = document.getElementById("target").value;
     if (text == "") {
       alert("Please enter the sentence");
       this.setState({ showMessage: false });
       return;
     }
-    if(this.state.mode == "url" && !text.includes("http")){
+    if (this.state.mode == "url" && !text.includes("http")) {
       alert("Please type url or change the input type !!");
       this.setState({ showMessage: false });
       return;
@@ -77,11 +80,20 @@ class App extends React.Component {
       "=" +
       document.getElementById("textinput").value;
 
-    fetch(url).then((response) => {
+    fetch(url
+    //   {method: "POST", 
+    // headers: {
+    //   'Content-Type': 'application/json;charset=utf-8'
+    // },
+    // body: JSON.stringify({target: target})}
+    ).then((response) => {
       response
-        .text()
-        .then((data) => {
-          console.log("data ", data);
+        .json()
+        .then((res) => {
+          console.log("data ", res);
+          this.setState({ report: res });
+          let data = res.sentiment.document.label;
+          // res.send(analysisResults.result.sentiment.document.label);
           // this.setState({sentimentOutput:data});
           let output = data;
           if (data == "positive") {
@@ -101,9 +113,7 @@ class App extends React.Component {
                 backgroundColor: "wheat",
               }}
             >
-              {data.includes("not enough")
-                ? "Please enter more text to analyse"
-                : data}
+              {data}
             </div>
           );
           this.setState({ showMessage: false });
@@ -111,21 +121,23 @@ class App extends React.Component {
           // document.getElementById("textinput").value = "";
         })
         .catch((err) => {
-          alert("Please enter more words to analyse!!");
-          // return;
+          alert(err);
+          return;
         });
     });
   };
 
-  sendForEmotionAnalysis = () => {
+  sendForEmotionAnalysis = async () => {
     this.setState({ showMessage: true });
     let text = document.getElementById("textinput").value;
+    // let target = document.getElementById("target");
+
     if (text == "") {
       alert("Please enter the sentence");
       this.setState({ showMessage: false });
       return;
     }
-    if(this.state.mode == "url" && !text.includes("http")){
+    if (this.state.mode == "url" && !text.includes("http")) {
       alert("Please type url or change the input type !!");
       this.setState({ showMessage: false });
       return;
@@ -143,9 +155,12 @@ class App extends React.Component {
       "=" +
       document.getElementById("textinput").value;
     try {
-      fetch(url).then((response) => {
-        response.json().then((data) => {
-          console.log("response ", data);
+      await fetch(url).then((response) => {
+        response.json().then((res) => {
+          console.log("response ", res);
+          this.setState({ report: res });
+          let data = res.keywords[0].emotion;
+          // res.send(analysisResults.result.keywords[0].emotion, null, 2);
           if (data.err) {
             this.setState({ text: <h1>Please enter more text to analyse</h1> });
             return;
@@ -157,7 +172,8 @@ class App extends React.Component {
       });
     } catch (err) {
       console.log(err);
-      alert("Please enter more words to analyse!!");
+      alert(err);
+      return;
     }
   };
 
@@ -167,8 +183,8 @@ class App extends React.Component {
         <div className="container-fluid main">
           {/* // input-section */}
           <div className="row input-section">
-            <div className="col-2">
-              <div className="selection mb-2 mt-1">
+            <div className="col-3 selection mb-2 mt-1">
+              
                 <h5>Select Input type</h5>
                 <Buttons
                   type="info"
@@ -182,24 +198,40 @@ class App extends React.Component {
                   category="url"
                   renderOutput={this.renderOutput}
                 />
-              </div>
+                
+              
+                {/* <input className="mt-2" type="text" id="target" name="target" placeholder="Words to target (optional)" /> */}
+              
+              
             </div>
-            <div className="col-7 content-section">
+            <div className="col-6 content-section">
               {this.state.showTextBox ? (
-                <textarea rows="4" cols="70" id="textinput" placeholder="Please type text here to analyze"/>
+                <textarea
+                  rows="4"
+                  cols="70"
+                  id="textinput"
+                  placeholder="Please type text here to analyze"
+                />
               ) : (
-                <textarea rows="1" cols="70" id="textinput" placeholder="Please type url here to analyze"/>
+                <textarea
+                  rows="1"
+                  cols="70"
+                  id="textinput"
+                  placeholder="Please type url here to analyze"
+                />
               )}
+             
+              
             </div>
             <div className="col-3 navigation-section">
               <div className="selection mb-2 mt-1">
                 <h5>Run Analyze type</h5>
-                <Buttons
+                {/* <Buttons
                   type="primary"
                   text="Analyze Sentiment"
                   category=""
                   renderOutput={this.sendForSentimentAnalysis}
-                />
+                /> */}
 
                 <Buttons
                   type="primary"
@@ -213,9 +245,43 @@ class App extends React.Component {
 
           {/* output section */}
           <div className="row output-section">
-          
-            {this.state.sentimentOutput}
-            {this.state.showMessage ? this.state.message : null}
+            <div className="col-3" id="report-section">
+              
+                <div>
+                  <h5>Analysis Report</h5>
+                  <Report result={this.state.report} />
+                </div>
+              
+            </div>
+            <div className="col-1"></div>
+            <div className="col-8" id="result-section">
+              <div className="row result-heading">
+                <div className="col-6">
+                <Buttons
+                  type="primary"
+                  text="Table Format"
+                  category=""
+                  renderOutput={() => this.setState({showGraph: false})}
+                />
+              <Buttons
+                  type="primary"
+                  text="Graph Format"
+                  category=""
+                  renderOutput={() => this.setState({showGraph: true})}
+                />
+                </div>
+             <div className="col-6">
+             <h5>Analysis Result</h5>
+             </div>
+             
+              </div>
+            
+
+              {this.state.showGraph ? "Graph" : this.state.sentimentOutput}
+              <br />
+              {this.state.showMessage ? this.state.message : null}
+            </div>
+            {/* <div className="col-4"></div> */}
           </div>
         </div>
       </div>

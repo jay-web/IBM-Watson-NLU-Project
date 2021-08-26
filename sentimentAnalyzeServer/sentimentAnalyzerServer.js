@@ -2,6 +2,8 @@ const express = require("express");
 
 const app = new express();
 
+app.use(express.json());   
+app.use(express.urlencoded({ extended: true }));
 /*This tells the server to use the client 
 folder for all static resources*/
 app.use(express.static("client"));
@@ -34,15 +36,16 @@ function getNLUInstance() {
     serviceUrl: `${api_url}`,
   });
 
-  console.log("nlu ", naturalLanguageUnderstanding);
+  // console.log("nlu ", naturalLanguageUnderstanding);
 
   return naturalLanguageUnderstanding;
 }
 
-let analyze = (req, res, category) => {
+let analyze = (req, res) => {
   let urlToAnalyze = req.query.url;
   let textToAnalyze = req.query.text;
-  
+  // let target = req.body.target ? req.body.target.split(" ") : []
+  // console.log("text to analyze ", target);
   const analyzeParams = {
     url: urlToAnalyze,
     text: textToAnalyze,
@@ -54,6 +57,13 @@ let analyze = (req, res, category) => {
         emotion: true,
         sentiment: true,
       },
+      entities:{
+        emotion: true,
+        sentiment: true,
+      }
+      // sentiment:{
+      //   targets: target.length ? target : []
+      // }
     },
   };
 
@@ -62,27 +72,11 @@ let analyze = (req, res, category) => {
   naturalLanguageUnderstanding
     .analyze(analyzeParams)
     .then((analysisResults) => {
-      //Print the JSON returned by NLU instance as a formatted string
-      //   console.log(
-      //     JSON.stringify(analysisResults.result.keywords[0].emotion, null, 2)
-      //   );
-      //   console.log("REsponse ", analysisResults.result.sentiment.targets[0].label);
-      //Please refer to the image to see the order of retrieval
-      if (category == "emotion") {
-        if (analysisResults.result.keywords) {
-          return res.send(analysisResults.result.keywords[0].emotion, null, 2);
-        }
-      }
+      // console.log("analysisResults ", analysisResults);
+      // console.log("analysisResults ", analysisResults.result.sentiment);
+      // console.log("analysisResults ", analysisResults.result.keywords);
 
-      if (category == "emotion") {
-        if (analysisResults.result.keywords) {
-          return res.send(analysisResults.result.keywords[0].emotion, null, 2);
-        }
-      }
-
-      if (category == "sentiment") {
-        return res.send(analysisResults.result.sentiment.document.label);
-      }
+      return res.send(analysisResults.result, null, 2);
     })
     .catch((err) => {
       return res.status(304).send({ err: err });
@@ -97,7 +91,7 @@ app.get("/", (req, res) => {
 //The endpoint for the webserver ending with /url/emotion
 app.get("/url/emotion", (req, res) => {
   // //Extract the url passed from the client through the request object
-  console.log("req ", req);
+  
   analyze(req, res, "emotion", "url");
 });
 
@@ -109,11 +103,12 @@ app.get("/url/sentiment", (req, res) => {
 //The endpoint for the webserver ending with /text/emotion
 app.get("/text/emotion", (req, res) => {
   // analyze(req, res);
-  console.log("req ", req);
+  
   analyze(req, res, "emotion", "text");
 });
 
 app.get("/text/sentiment", (req, res) => {
+  // console.log("request body ", req.body);
   analyze(req, res, "sentiment", "text");
 });
 
