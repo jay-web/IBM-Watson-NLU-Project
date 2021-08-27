@@ -1,23 +1,18 @@
 import "./bootstrap.min.css";
 import "./App.css";
-import EmotionTable from "./EmotionTable.js";
+
 import React from "react";
 import Buttons from "./components/buttons";
 import Report from "./components/report";
 import Doc from "./components/doc";
-import { Doughnut } from "react-chartjs-2";
+
 import renderGraphData from "./utilis/graphData";
 import EntitiesData from "./components/entities";
 import Graph from "./components/graph";
 import Heading from "./components/heading";
 
 class App extends React.Component {
-  /*
-  We are setting the component as a state named innercomp.
-  When this state is accessed, the HTML that is set as the 
-  value of the state, will be returned. The initial input mode
-  is set to text
-  */
+ 
   state = {
     showTextBox: true,
     mode: "text",
@@ -56,11 +51,7 @@ class App extends React.Component {
     }
   };
 
-  /*
-  This method returns the component based on what the input mode is.
-  If the requested input mode is "text" it returns a textbox with 4 rows.
-  If the requested input mode is "url" it returns a textbox with 1 row.
-  */
+ 
 
   renderOutput = (input_mode) => {
     if (input_mode.category === "text") {
