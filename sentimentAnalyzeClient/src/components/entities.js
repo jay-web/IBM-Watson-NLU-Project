@@ -5,6 +5,8 @@ const EntitiesData = (props) => {
   console.log("et ", entities);
   return (
     <div className="mt-4">
+      {
+        entities.length ?
       <table className="table table-bordered table-striped ">
         <tbody>
          
@@ -30,6 +32,9 @@ const EntitiesData = (props) => {
           })}
         </tbody>
       </table>
+      :
+      <h3>No entities are available in your searching text</h3>
+}
     </div>
   );
 };
