@@ -72,14 +72,12 @@ let analyze = (req, res) => {
   naturalLanguageUnderstanding
     .analyze(analyzeParams)
     .then((analysisResults) => {
-      // console.log("analysisResults ", analysisResults);
-      // console.log("analysisResults ", analysisResults.result.sentiment);
-      // console.log("analysisResults ", analysisResults.result.keywords);
-
+    
       return res.send(analysisResults.result, null, 2);
     })
     .catch((err) => {
-      return res.status(304).send({ err: err });
+    
+      return res.send({ err: err });
     });
 };
 
@@ -95,10 +93,6 @@ app.get("/url/emotion", (req, res) => {
   analyze(req, res, "emotion", "url");
 });
 
-//The endpoint for the webserver ending with /url/sentiment
-app.get("/url/sentiment", (req, res) => {
-  analyze(req, res, "sentiment", "url");
-});
 
 //The endpoint for the webserver ending with /text/emotion
 app.get("/text/emotion", (req, res) => {
@@ -107,10 +101,7 @@ app.get("/text/emotion", (req, res) => {
   analyze(req, res, "emotion", "text");
 });
 
-app.get("/text/sentiment", (req, res) => {
-  // console.log("request body ", req.body);
-  analyze(req, res, "sentiment", "text");
-});
+
 
 let server = app.listen(8080, () => {
   console.log("Listening", server.address().port);

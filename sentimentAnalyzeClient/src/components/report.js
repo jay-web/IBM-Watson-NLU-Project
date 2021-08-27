@@ -20,6 +20,21 @@ const Report = (props) => {
           <li>
             <span>Sentiment Score:</span> {result ? result.sentiment.document.score : ""}
           </li>
+          <li>
+            <span>Sadness:</span> {result ? result.keywords[0].emotion.sadness : ""}
+          </li>
+          <li>
+            <span>Joy:</span> {result ? result.keywords[0].emotion.joy : ""}
+          </li>
+          <li>
+            <span>Fear:</span> {result ? result.keywords[0].emotion.fear: ""}
+          </li>
+          <li>
+            <span>Disgust:</span> {result ? result.keywords[0].emotion.disgust: ""}
+          </li>
+          <li>
+            <span>Anger:</span> {result ? result.keywords[0].emotion.anger: ""}
+          </li>
         </div>
       
     </div>

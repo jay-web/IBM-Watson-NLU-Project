@@ -1,7 +1,7 @@
 import React from "react";
 
 const Buttons = (props) => {
-    let {text, type, category, renderOutput} = props;
+    let {text, type, category, renderOutput, size, disabled} = props;
 
     let changeUi = (category) => {
         console.log("pressing me")
@@ -15,8 +15,9 @@ const Buttons = (props) => {
   return (
     <>
       <button
-        className={`btn btn-${type} mr-2 mt-2`}
+        className={`btn btn-${type} btn-${size} mr-2 mt-2`}
         onClick={() => changeUi({category}) }
+        disabled={disabled}
       >
         {text}
       </button>
