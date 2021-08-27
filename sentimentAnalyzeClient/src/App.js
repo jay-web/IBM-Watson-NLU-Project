@@ -8,6 +8,8 @@ import Doc from "./components/doc";
 import { Doughnut } from "react-chartjs-2";
 import renderGraphData from "./utilis/graphData";
 import EntitiesData from "./components/entities";
+import Graph from "./components/graph";
+import Heading from "./components/heading";
 
 class App extends React.Component {
   /*
@@ -22,7 +24,7 @@ class App extends React.Component {
     sentimentOutput: <Doc />,
     sentiment: true,
     color: "",
-    text: "",
+    
     message: "Please wait ...",
     showMessage: false,
     report: null,
@@ -74,9 +76,12 @@ class App extends React.Component {
     }
 
     this.setState({
-      sentimentOutput: [],
+      sentimentOutput:  <Doc />,
       sentiment: true,
       text: "",
+      showGraph: false,
+      showEntities:false,
+      report:null
     });
     document.getElementById("textinput").value = "";
   };
@@ -98,8 +103,9 @@ class App extends React.Component {
       this.setState({ showMessage: false });
       return;
     }
-    this.setState({ text: <h2>{text}</h2> });
+    
     this.setState({ sentiment: false });
+
     let url = ".";
     let mode = this.state.mode;
     url =
@@ -110,6 +116,7 @@ class App extends React.Component {
       mode +
       "=" +
       document.getElementById("textinput").value;
+
      fetch(url).then((response) => {
         response.json().then((res) => {
           console.log("response ", res);
@@ -154,66 +161,12 @@ class App extends React.Component {
       <div className="App">
         <div className="container-fluid main">
           {/* // input-section */}
-          <div className="row input-section">
-            <div className="col-3 selection mb-2 mt-1">
-              <h5>Select Input type</h5>
-              <Buttons
-                type="info"
-                text="Text"
-                category="text"
-                renderOutput={this.renderOutput}
-                size="sm"
-                disabled={false}
-              />
-              <Buttons
-                type="dark"
-                text="Url"
-                category="url"
-                renderOutput={this.renderOutput}
-                size="sm"
-                disabled={false}
-              />
+         <Heading 
+         renderOutput={this.renderOutput} 
+         showTextBox={this.state.showTextBox}
+         sendForEmotionAnalysis={this.sendForEmotionAnalysis}
 
-              {/* <input className="mt-2" type="text" id="target" name="target" placeholder="Words to target (optional)" /> */}
-            </div>
-            <div className="col-6 content-section">
-              {this.state.showTextBox ? (
-                <textarea
-                  rows="4"
-                  cols="70"
-                  id="textinput"
-                  placeholder="Please type text here to analyze"
-                />
-              ) : (
-                <textarea
-                  rows="1"
-                  cols="70"
-                  id="textinput"
-                  placeholder="Please type url here to analyze"
-                />
-              )}
-            </div>
-            <div className="col-3 navigation-section">
-              <div className="selection mb-2 mt-1">
-                <h5>Run Analyze type</h5>
-                {/* <Buttons
-                  type="primary"
-                  text="Analyze Sentiment"
-                  category=""
-                  renderOutput={this.sendForSentimentAnalysis}
-                /> */}
-
-                <Buttons
-                  type="primary"
-                  text=" Analyze Emotion"
-                  category=""
-                  renderOutput={this.sendForEmotionAnalysis}
-                  size="sm"
-                  disabled={false}
-                />
-              </div>
-            </div>
-          </div>
+         />
 
           {/* output section */}
           <div className="row output-section">
@@ -253,12 +206,7 @@ class App extends React.Component {
               <div className="row result-display">
                 <div className="col-12">
                 {this.state.showGraph ? 
-                  <Doughnut
-                    data={renderGraphData(this.state.emotions)}
-                    height={400}
-                    width={400}
-                    options={this.state.options}
-                  />
+                 <Graph data={renderGraphData(this.state.emotions)} options={this.state.options}/>
                   : this.state.showEntities 
                   ? <EntitiesData entities={this.state.entities} /> 
                   :

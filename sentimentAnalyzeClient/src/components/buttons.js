@@ -4,12 +4,8 @@ const Buttons = (props) => {
     let {text, type, category, renderOutput, size, disabled} = props;
 
     let changeUi = (category) => {
-        console.log("pressing me")
-        if(category){
-            renderOutput(category)
-        }else{
-            renderOutput();
-        }
+      
+        renderOutput(category)
         
     }
   return (
