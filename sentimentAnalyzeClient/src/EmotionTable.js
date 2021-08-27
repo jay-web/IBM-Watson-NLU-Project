@@ -11,9 +11,7 @@ class EmotionTable extends React.Component {
         <table className="table table-bordered">
           <tbody>
             {
-              /*Write code to use the .map method that you worked on in the 
-              Hands-on React lab to extract the emotions. If you are stuck,
-              please click the instructions to see how to implement a map*/
+              
 
               Object.keys(emotions).map((e, i) => {
                 return (
