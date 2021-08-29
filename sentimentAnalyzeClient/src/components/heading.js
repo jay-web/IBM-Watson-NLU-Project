@@ -8,7 +8,7 @@ import Doc from "./doc";
 
 const Heading = (props) => {
     const {showTextBox,sendForEmotionAnalysis} = props;
-    const [globalState, dispatch ] = useContext(StoreContext);
+    const [, dispatch ] = useContext(StoreContext);
 
     let switchTextBox = (input_mode) => {
       dispatch({ type: types.DISABLE_BUTTON, payload: true});

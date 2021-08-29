@@ -19,27 +19,6 @@ const App  = () =>  {
  const [globalState, dispatch ] = useReducer(reducer, INITIAL_STATE);
 
 
-  let renderOutput = (input_mode) => {
-    dispatch({ type: types.DISABLE_BUTTON, payload: true});
-
-    if (input_mode.category === "text") {
-        dispatch({ type: types.UPDATE_MODE, payload: 'text'});
-        dispatch({ type: types.SHOW_TEXTBOX, payload: true});
-
-     
-    } else {
-        dispatch({ type: types.UPDATE_MODE, payload: 'url'});
-        dispatch({ type: types.SHOW_TEXTBOX, payload: false});
-    
-    }
-    dispatch({ type: types.UPDATE_SENTIMENT_OUTPUT, payload: <Doc /> });
-    dispatch({ type: types.SHOW_GRAPH, payload: false});
-    dispatch({ type: types.SHOW_ENTITIES, payload: false});
-    dispatch({ type: types.UPDATE_REPORT, payload: null});
-
-    document.getElementById("textinput").value = "";
-  };
-
   let sendForEmotionAnalysis = async () => {
 
     dispatch({type: types.SHOW_MESSAGE, payload: true});
