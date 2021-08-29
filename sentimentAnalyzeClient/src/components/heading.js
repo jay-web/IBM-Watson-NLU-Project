@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import { StoreContext } from "../reducer/reducer";
 import "../../src/bootstrap.min.css";
 import "../../src/App.css";
@@ -7,8 +7,11 @@ import { types } from "../reducer/actionTypes";
 import Doc from "./doc";
 
 const Heading = (props) => {
-    const {showTextBox,sendForEmotionAnalysis} = props;
-    const [, dispatch ] = useContext(StoreContext);
+    const {sendForEmotionAnalysis} = props;
+    const [globalState, dispatch ] = useContext(StoreContext);
+    const {showTextBox } = globalState;
+    const textBoxRef = useRef(null);
+  
 
     let switchTextBox = (input_mode) => {
       dispatch({ type: types.DISABLE_BUTTON, payload: true});
@@ -28,7 +31,8 @@ const Heading = (props) => {
       dispatch({ type: types.SHOW_ENTITIES, payload: false});
       dispatch({ type: types.UPDATE_REPORT, payload: null});
   
-      document.getElementById("textinput").value = "";
+     
+      textBoxRef.current.value = ""
     };
 
 
@@ -62,6 +66,7 @@ const Heading = (props) => {
               cols="70"
               id="textinput"
               placeholder="Please type text here to analyze"
+              ref={textBoxRef}
             />
           ) : (
             <textarea
@@ -69,6 +74,7 @@ const Heading = (props) => {
               cols="70"
               id="textinput"
               placeholder="Please type url here to analyze"
+              ref={textBoxRef}
             />
           )}
         </div>

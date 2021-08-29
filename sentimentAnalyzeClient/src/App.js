@@ -70,7 +70,6 @@ const App = () => {
         <div className="container-fluid main">
           {/* // input-section */}
           <Heading
-            showTextBox={globalState.showTextBox}
             sendForEmotionAnalysis={sendForEmotionAnalysis}
           />
 
