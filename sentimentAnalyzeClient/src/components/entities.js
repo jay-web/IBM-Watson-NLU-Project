@@ -1,6 +1,6 @@
 import React from "react";
 
-const EntitiesData = (props) => {
+const ShowEntities = (props) => {
   const { entities } = props;
   console.log("et ", entities);
   return (
@@ -39,4 +39,4 @@ const EntitiesData = (props) => {
   );
 };
 
-export default EntitiesData;
+export default ShowEntities;
