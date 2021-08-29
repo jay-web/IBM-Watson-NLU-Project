@@ -11,9 +11,13 @@ const Heading = (props) => {
     const [globalState, dispatch ] = useContext(StoreContext);
     const {showTextBox } = globalState;
     const textBoxRef = useRef(null);
-  
+
+    useEffect(() => {
+      textBoxRef.current.focus();
+    }, [])
 
     let switchTextBox = (input_mode) => {
+      textBoxRef.current.focus();
       dispatch({ type: types.DISABLE_BUTTON, payload: true});
   
       if (input_mode.category === "text") {
