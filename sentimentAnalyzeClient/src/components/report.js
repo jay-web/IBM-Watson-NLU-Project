@@ -1,39 +1,42 @@
-import React from "react";
+import React, {useContext} from "react";
+import { StoreContext } from "../reducer/reducer";
 
-const Report = (props) => {
-  let { result } = props;
+const Report = () => {
+  const [globalState] = useContext(StoreContext);
+
+  let { report } = globalState;
   return (
     <div className="report-section">
       
         <div>
           <li>
             <span>Language:</span>
-            {result ? result.language : ""}
+            {report ? report.language : ""}
           </li>
           <li>
-            <span>Total characters:</span> {result ? result.usage.text_characters: ""}
+            <span>Total characters:</span> {report ? report.usage.text_characters: ""}
           </li>
           <li>
             <span>Sentiment: </span>
-            {result ? result.sentiment.document.label: ""}
+            {report ? report.sentiment.document.label: ""}
           </li>
           <li>
-            <span>Sentiment Score:</span> {result ? result.sentiment.document.score : ""}
+            <span>Sentiment Score:</span> {report ? report.sentiment.document.score : ""}
           </li>
           <li>
-            <span>Sadness:</span> {result ? result.keywords[0].emotion.sadness : ""}
+            <span>Sadness:</span> {report ? report.keywords[0].emotion.sadness : ""}
           </li>
           <li>
-            <span>Joy:</span> {result ? result.keywords[0].emotion.joy : ""}
+            <span>Joy:</span> {report ? report.keywords[0].emotion.joy : ""}
           </li>
           <li>
-            <span>Fear:</span> {result ? result.keywords[0].emotion.fear: ""}
+            <span>Fear:</span> {report ? report.keywords[0].emotion.fear: ""}
           </li>
           <li>
-            <span>Disgust:</span> {result ? result.keywords[0].emotion.disgust: ""}
+            <span>Disgust:</span> {report ? report.keywords[0].emotion.disgust: ""}
           </li>
           <li>
-            <span>Anger:</span> {result ? result.keywords[0].emotion.anger: ""}
+            <span>Anger:</span> {report ? report.keywords[0].emotion.anger: ""}
           </li>
         </div>
       

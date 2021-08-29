@@ -88,7 +88,7 @@ const App  = () =>  {
             <div className="col-3" id="report-section">
               <div>
                 <h5>Analysis Report</h5>
-                <Report result={globalState.report} />
+                <Report  />
               </div>
             </div>
 
