@@ -1,94 +1,65 @@
 import "./bootstrap.min.css";
 import "./App.css";
 
-import React from "react";
+import React, { useReducer, useContext } from "react";
 import Buttons from "./components/buttons";
 import Report from "./components/report";
 import Doc from "./components/doc";
+import { StoreContext } from "./reducer/reducer";
 
 import renderGraphData from "./utilis/graphData";
 import EntitiesData from "./components/entities";
 import Graph from "./components/graph";
 import Heading from "./components/heading";
+import { types } from "./reducer/actionTypes";
 
-class App extends React.Component {
-  state = {
-    showTextBox: true,
-    mode: "text",
-    sentimentOutput: <Doc />,
+import {INITIAL_STATE, reducer } from "./reducer/reducer";
 
-    color: "",
+const App  = () =>  {
+ const [globalState, dispatch ] = useReducer(reducer, INITIAL_STATE);
+ const [state, setState ] = useContext(StoreContext);
 
-    message: "Please wait ...",
-    showMessage: false,
-    report: null,
-    showGraph: false,
-    emotions: [],
-    entities: [],
-    showEntities: false,
-    buttonDisabled: true,
-    options: {
-      plugins: {
-        legend: {
-          position: "right",
-          // maxHeight: "200px"
-          fullSize: true,
-          labels: {
-            boxHeight: 100,
-            boxWidth: 100,
-            font: {
-              size: 30,
-            },
-          },
-        },
-        tooltip: {
-          enabled: false,
-        },
-      },
-    },
-  };
+  let renderOutput = (input_mode) => {
+    dispatch({ type: types.DISABLE_BUTTON, payload: true});
 
-  renderOutput = (input_mode) => {
     if (input_mode.category === "text") {
-      this.setState({
-        mode: "text",
-        showTextBox: true,
-      });
-    } else {
-      this.setState({
-        mode: "url",
-        showTextBox: false,
-      });
-    }
+        dispatch({ type: types.UPDATE_MODE, payload: 'text'});
+        dispatch({ type: types.SHOW_TEXTBOX, payload: true});
 
-    this.setState({
-      sentimentOutput: <Doc />,
-      text: "",
-      showGraph: false,
-      showEntities: false,
-      report: null,
-    });
+     
+    } else {
+        dispatch({ type: types.UPDATE_MODE, payload: 'url'});
+        dispatch({ type: types.SHOW_TEXTBOX, payload: false});
+    
+    }
+    dispatch({ type: types.UPDATE_SENTIMENT_OUTPUT, payload: <Doc /> });
+    dispatch({ type: types.SHOW_GRAPH, payload: false});
+    dispatch({ type: types.SHOW_ENTITIES, payload: false});
+    dispatch({ type: types.UPDATE_REPORT, payload: null});
+
     document.getElementById("textinput").value = "";
   };
 
-  sendForEmotionAnalysis = async () => {
-    this.setState({ showMessage: true });
+  let sendForEmotionAnalysis = async () => {
+
+    dispatch({type: types.SHOW_MESSAGE, payload: true});
+    
     let text = document.getElementById("textinput").value;
     // let target = document.getElementById("target");
 
     if (text == "") {
       alert("Please enter the sentence");
-      this.setState({ showMessage: false });
+      dispatch({type: types.SHOW_MESSAGE, payload: false});
       return;
     }
-    if (this.state.mode == "url" && !text.includes("http")) {
+    if (globalState.mode == "url" && !text.includes("http")) {
       alert("Please type url or change the input type !!");
-      this.setState({ showMessage: false });
+      dispatch({type: types.SHOW_MESSAGE, payload: false});
       return;
     }
 
     let url = ".";
-    let mode = this.state.mode;
+    let mode = globalState.mode;
     url =
       url +
       "/" +
@@ -98,7 +69,7 @@ class App extends React.Component {
       "=" +
       document.getElementById("textinput").value;
 
-    fetch(url).then((response) => {
+    await fetch(url).then((response) => {
       response.json().then((res) => {
         if (res.err && res.err.status === 400) {
           alert(res.err.message);
@@ -106,40 +77,32 @@ class App extends React.Component {
         }
 
         let data = res.keywords[0].emotion;
-        // res.send(analysisResults.result.keywords[0].emotion, null, 2);
-        if (data.err) {
-          this.setState({ text: <h1>Please enter more text to analyse</h1> });
-          return;
-        }
-
         let emotionData = Object.keys(data).map((e, i) => {
           return data[e];
         });
 
-        this.setState({
-          emotions: emotionData,
-          showGraph: true,
-          buttonDisabled: false,
-          showMessage: false,
-          report: res,
-          entities: res.entities,
-        });
+        dispatch({type: types.UPDATE_EMOTIONS, payload: emotionData});
+        dispatch({type: types.SHOW_GRAPH, payload: true});
+        dispatch({type: types.DISABLE_BUTTON, payload: false});
+        dispatch({type: types.SHOW_MESSAGE, payload: false});
+        dispatch({type: types.UPDATE_REPORT, payload: res});
+        dispatch({type: types.UPDATE_ENTITIES, payload: res.entities });
+       
 
-        // this.setState({ sentimentOutput: <EmotionTable emotions={data} /> });
-        // document.getElementById("textinput").value = "";
       });
     });
   };
 
-  render() {
+    
     return (
-      <div className="App">
+        <div className="App">
+          <StoreContext.Provider  value={[globalState, dispatch ]} >
         <div className="container-fluid main">
           {/* // input-section */}
           <Heading
-            renderOutput={this.renderOutput}
-            showTextBox={this.state.showTextBox}
-            sendForEmotionAnalysis={this.sendForEmotionAnalysis}
+            renderOutput={renderOutput}
+            showTextBox={globalState.showTextBox}
+            sendForEmotionAnalysis={sendForEmotionAnalysis}
           />
 
           {/* output section */}
@@ -147,7 +110,7 @@ class App extends React.Component {
             <div className="col-3" id="report-section">
               <div>
                 <h5>Analysis Report</h5>
-                <Report result={this.state.report} />
+                <Report result={globalState.report} />
               </div>
             </div>
 
@@ -158,28 +121,33 @@ class App extends React.Component {
                     type="primary"
                     text="Doughnut Format"
                     category=""
-                    renderOutput={() =>
-                      this.setState({ showGraph: true, showEntities: false })
+                    renderOutput={() => {
+                      dispatch({type: types.SHOW_GRAPH, payload: true });
+                      dispatch({type: types.SHOW_ENTITIES, payload: false })
+                    }
                     }
                     size="sm"
-                    disabled={this.state.buttonDisabled}
+                    disabled={globalState.buttonDisabled}
                   />
+
                   <Buttons
                     type="secondary"
                     text="Entities Data"
                     category=""
-                    renderOutput={() =>
-                      this.setState({ showEntities: true, showGraph: false })
+                    renderOutput={() => {
+                       dispatch({type: types.SHOW_GRAPH , payload: false});
+                       dispatch({type: types.SHOW_ENTITIES, payload: true });
+                    }
                     }
                     size="sm"
-                    disabled={this.state.buttonDisabled}
+                    disabled={globalState.buttonDisabled}
                   />
                 </div>
                 <div className="col-6 heading-content ">
                   <h5>Analysis Result</h5>
                   <h6>
-                    {this.state.report
-                      ? this.state.showGraph
+                    {globalState.report
+                      ? globalState.showGraph
                         ? "( In Doughnut Format )"
                         : "( Entities Data Collection )"
                       : null}
@@ -188,27 +156,29 @@ class App extends React.Component {
               </div>
               <div className="row result-display">
                 <div className="col-12">
-                  {this.state.showGraph ? (
+                  {globalState.showGraph ? (
                     <Graph
-                      data={renderGraphData(this.state.emotions)}
-                      options={this.state.options}
+                      data={renderGraphData(globalState.emotions)}
+                      options={globalState.options}
                     />
-                  ) : this.state.showEntities ? (
-                    <EntitiesData entities={this.state.entities} />
+                  ) : globalState.showEntities ? (
+                    <EntitiesData entities={globalState.entities} />
                   ) : (
-                    this.state.sentimentOutput
+                    globalState.sentimentOutput
                   )}
                   <br />
-                  {this.state.showMessage ? this.state.message : null}
+                  { globalState.showMessage ? globalState.message : null}
+                 
                 </div>
               </div>
             </div>
             {/* <div className="col-4"></div> */}
           </div>
         </div>
+        </StoreContext.Provider>
       </div>
-    );
-  }
+    )
+  
 }
 
 export default App;
