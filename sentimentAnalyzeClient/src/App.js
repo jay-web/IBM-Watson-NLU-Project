@@ -17,7 +17,7 @@ import {INITIAL_STATE, reducer } from "./reducer/reducer";
 
 const App  = () =>  {
  const [globalState, dispatch ] = useReducer(reducer, INITIAL_STATE);
- const [state, setState ] = useContext(StoreContext);
+
 
   let renderOutput = (input_mode) => {
     dispatch({ type: types.DISABLE_BUTTON, payload: true});
@@ -100,7 +100,6 @@ const App  = () =>  {
         <div className="container-fluid main">
           {/* // input-section */}
           <Heading
-            renderOutput={renderOutput}
             showTextBox={globalState.showTextBox}
             sendForEmotionAnalysis={sendForEmotionAnalysis}
           />
