@@ -15,6 +15,8 @@ import { types } from "./reducer/actionTypes";
 
 import {INITIAL_STATE, reducer } from "./reducer/reducer";
 
+import ResultHeading from "./components/resultHeading";
+
 const App  = () =>  {
  const [globalState, dispatch ] = useReducer(reducer, INITIAL_STATE);
 
@@ -85,6 +87,7 @@ const App  = () =>  {
 
           {/* output section */}
           <div className="row output-section">
+            {/* // Report section */}
             <div className="col-3" id="report-section">
               <div>
                 <h5>Analysis Report</h5>
@@ -92,45 +95,11 @@ const App  = () =>  {
               </div>
             </div>
 
+            {/* // Result Section  */}
             <div className="col-9" id="result-section">
               <div className="row result-heading">
-                <div className="col-6 heading-content ">
-                  <Buttons
-                    type="primary"
-                    text="Doughnut Format"
-                    category=""
-                    renderOutput={() => {
-                      dispatch({type: types.SHOW_GRAPH, payload: true });
-                      dispatch({type: types.SHOW_ENTITIES, payload: false })
-                    }
-                    }
-                    size="sm"
-                    disabled={globalState.buttonDisabled}
-                  />
-
-                  <Buttons
-                    type="secondary"
-                    text="Entities Data"
-                    category=""
-                    renderOutput={() => {
-                       dispatch({type: types.SHOW_GRAPH , payload: false});
-                       dispatch({type: types.SHOW_ENTITIES, payload: true });
-                    }
-                    }
-                    size="sm"
-                    disabled={globalState.buttonDisabled}
-                  />
-                </div>
-                <div className="col-6 heading-content ">
-                  <h5>Analysis Result</h5>
-                  <h6>
-                    {globalState.report
-                      ? globalState.showGraph
-                        ? "( In Doughnut Format )"
-                        : "( Entities Data Collection )"
-                      : null}
-                  </h6>
-                </div>
+                <ResultHeading />
+               
               </div>
               <div className="row result-display">
                 <div className="col-12">
