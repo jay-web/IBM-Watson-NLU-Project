@@ -1,6 +1,7 @@
 const renderGraphData = (emotions) => {
+  console.log("emotions ", emotions);
     const data = {
-      labels: ["Sadness", "Joy", "Fear", "Disgust", "Anger"],
+      labels: [`Sadness - ( ${emotions[0]} )`, `Joy - ( ${emotions[1]} )`, `Fear - ( ${emotions[2]} )`, `Disgust - ( ${emotions[3]} )`, `Anger - ( ${emotions[4]} )`],
       datasets: [
         {
           label: "# of Emotions",
