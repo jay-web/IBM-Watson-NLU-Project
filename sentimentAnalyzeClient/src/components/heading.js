@@ -42,7 +42,7 @@ const Heading = (props) => {
 
     return (
         <div className="row input-section">
-        <div className="col-3 selection mb-2 mt-1">
+        <div className="col-sm-12 col-md-3 selection mb-2 mt-1">
           <h5>Select Input type</h5>
           <Buttons
             type="info"
@@ -63,7 +63,7 @@ const Heading = (props) => {
 
           {/* <input className="mt-2" type="text" id="target" name="target" placeholder="Words to target (optional)" /> */}
         </div>
-        <div className="col-6 content-section">
+        <div className="col-sm-12 col-md-6 content-section mb-2 mt-1">
           {showTextBox ? (
             <textarea
               rows="4"
@@ -82,9 +82,9 @@ const Heading = (props) => {
             />
           )}
         </div>
-        <div className="col-3 navigation-section">
+        <div className="col-sm-12 col-md-3 navigation-section">
           <div className="selection mb-2 mt-1">
-            <h5>Run Analyze type</h5>
+            <h5>Run Analysis</h5>
           
 
             <Buttons

@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf ../sentimentAnalyzeServer/client &&mv build ../sentimentAnalyzeServer/client",
+    "build": "react-scripts build && rmdir /s /q D:\\projects\\personal\\IBM-Watson-NLU-Project\\sentimentAnalyzeServer\\client && move build D:\\projects\\personal\\IBM-Watson-NLU-Project\\sentimentAnalyzeServer\\client",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

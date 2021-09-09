@@ -18,25 +18,8 @@ export const INITIAL_STATE = {
   entities: [],
   showEntities: false,
   buttonDisabled: true,
-  options: {
-    plugins: {
-      legend: {
-        position: "right",
-        // maxHeight: "200px"
-        fullSize: true,
-        labels: {
-          boxHeight: 100,
-          boxWidth: 100,
-          font: {
-            size: 30,
-          },
-        },
-      },
-      tooltip: {
-        enabled: false,
-      },
-    },
-  },
+  setGraphProperty: true,
+
 };
 
 
@@ -64,6 +47,8 @@ export const reducer = (state, action) => {
             return {...state, showEntities : action.payload}
         case types.DISABLE_BUTTON :
             return {...state, buttonDisabled : action.payload }
+        case types.SET_GRAPH_PROPERTY:
+            return {...state, setGraphProperty : action.payload }
         default :
             return state;
     }

@@ -11,5 +11,6 @@ export const types = {
     UPDATE_MODE : 'updateMode',
     UPDATE_SENTIMENT_OUTPUT : 'update_sentiment_output',
     DISABLE_BUTTON : 'disableButton',
+    SET_GRAPH_PROPERTY : 'setGraphProperty'
 }
 

@@ -1,7 +1,7 @@
 import "./bootstrap.min.css";
 import "./App.css";
 
-import React, { useReducer } from "react";
+import React, {useEffect, useReducer} from "react";
 import { StoreContext } from "./reducer/reducer";
 import { types } from "./reducer/actionTypes";
 import { INITIAL_STATE, reducer } from "./reducer/reducer";
@@ -13,6 +13,12 @@ import ShowResult from "./components/showResult";
 
 const App = () => {
   const [globalState, dispatch] = useReducer(reducer, INITIAL_STATE);
+
+  useEffect(() => {
+      if(window.innerWidth < 700){
+        dispatch({ type: types.SET_GRAPH_PROPERTY, payload: false })
+      }
+  },[])
 
   let sendForEmotionAnalysis = async () => {
     dispatch({ type: types.SHOW_MESSAGE, payload: true });
@@ -76,7 +82,7 @@ const App = () => {
           {/* output section */}
           <div className="row output-section">
             {/* // Report section */}
-            <div className="col-3" id="report-section">
+            <div className="col-sm-12 col-md-3" id="report-section">
               <div>
                 <h5>Analysis Report</h5>
                 <Report />
@@ -84,7 +90,7 @@ const App = () => {
             </div>
 
             {/* // Result Section  */}
-            <div className="col-9" id="result-section">
+            <div className="col-sm-12 col-md-9" id="result-section">
               <div className="row result-heading">
                 <ResultHeading />
               </div>
